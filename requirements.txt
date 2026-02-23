@@ -1,0 +1,21 @@
+# Jupyter Notebook
+notebook
+jupyter
+
+# Data manipulation and analysis
+pandas>=1.3.0
+numpy>=1.21.0
+
+# Scientific computing
+scipy>=1.7.0
+
+# Visualization
+matplotlib>=3.4.0
+seaborn>=0.11.0
+
+# Data I/O
+pyyaml>=5.4.0
+
+# Optional but recommended
+openpyxl>=3.0.0  # For Excel export if needed
+

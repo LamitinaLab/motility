@@ -1,169 +1,55 @@
-# Quick Start Guide - C. elegans Motility Analysis
+# Motility Analysis — Quick Start
 
-## Prerequisites
-1. Activate virtual environment:
-   ```powershell
-   .\venv\Scripts\Activate.ps1
-   ```
+## 1. Activate an environment
 
-2. Ensure your data is organized:
-   ```
-   Data/Raw/[date]/Wormlab_processed/[genotype]/[video]/
-   ```
+```bash
+conda activate wormlab
+which python
+```
 
-## Workflow
+The development interpreter resembles `/opt/anaconda3/envs/wormlab/bin/python`; another machine may use a different path or environment name. Install dependencies with `python -m pip install -r requirements.txt` if needed.
 
-### Step 1: Data Wrangling (Notebook 01)
-**Goal:** Process raw WormLab data into analyzable metrics
+## 2. Confirm raw WormLab exports
 
-**What it does:**
-- Loads Position.csv files (X,Y coordinates)
-- Loads CurvatureMap files (body curvature)
-- Reads metadata from YAML files
-- Calculates speeds, straightness, fatigue
-- Extracts thrashing frequency
-- Normalizes all tracks to origin (0,0)
+Under `Data/Raw/`, confirm Position, Fit, Length, Bending Angle — Mid-Point, Bending Angles — Multiple, and Center Points. Current sampling expects 11 Multiple Angles and 17 Center Points.
 
-**Run:** Execute all cells in `01_Data_Wrangling.ipynb`
+## 3. Run Notebook 1
 
-**Output:** 3 CSV files in `Data/Processed/`:
-- `track_metrics.csv` - Per-track summary metrics
-- `thrashing_data.csv` - Thrashing frequencies
-- `normalized_tracks.csv` - XY coordinates
+Run `01_Data_Wrangling.ipynb` top-to-bottom after raw-data changes. It aligns sources, preserves missing data, audits sampling, calculates production metrics, and writes `Data/Processed/`.
 
-**Time:** ~1-5 minutes depending on data size
+## 4. Run Notebook 2
 
----
+Run `02_Analysis_and_Plotting.ipynb` for phenotypes, wave validation, PCA, QC/robustness, Prism exports, duration validation, and prospective sample-size planning.
 
-### Step 2: Analysis & Plotting (Notebook 02)
-**Goal:** Statistical analysis and visualization
+Notebook 2 is expensive. Use targeted cells during development. Before finalizing, save, reopen, run top-to-bottom once, and confirm no stored errors. Current full execution is approximately 15–20 minutes on the development machine; runtime varies.
 
-**What it does:**
-- Calculates group statistics (mean ± SEM)
-- Performs ANOVA and pairwise t-tests
-- Creates publication-quality figures:
-  - Speed comparisons
-  - XY trajectory plots
-  - Straightness index
-  - Fatigue index
-  - Thrashing frequency
-  - Multi-panel summary
+## 5. Review outputs
 
-**Run:** Execute all cells in `02_Analysis_and_Plotting.ipynb`
+- Core processed data: `Data/Processed/`
+- QC/diagnostics: `results/qc/`
+- Prism-ready data: `results/prism/`
 
-**Output:** Multiple files in `results/`:
-- Summary CSV files
-- Statistical test results
-- Figures (PNG + PDF) in `results/figures/`
+See [OUTPUT_GUIDE.md](OUTPUT_GUIDE.md).
 
-**Time:** ~2-5 minutes
+## 6. Run Notebook 3
 
----
+Run `03_Archiving.ipynb` and review the archive manifest.
 
-### Step 3: Archiving (Notebook 03)
-**Goal:** Package and document analysis results
+## 7. Git checkpoint
 
-**What it does:**
-- Creates timestamped archive directory
-- Copies all processed data, results, figures
-- Generates comprehensive summary report
-- Creates README and manifest
-- Optional: ZIP compression
+```bash
+git status
+git add <specific intentional files>
+git commit -m "descriptive message"
+git push
+```
 
-**Run:** Execute all cells in `03_Archiving.ipynb`
+Do not use `git add .` unless every change has been reviewed.
 
-**Output:** Archive in `Data/Archive/archive_[timestamp]/`
-- Complete copy of all results
-- Summary report
-- Documentation
-- Optional ZIP file
+## 8. Interpretation reminders
 
-**Time:** ~1-2 minutes
-
----
-
-## Key Metrics Explained
-
-### Speed (μm/s)
-Average velocity of worm movement. Higher = faster locomotion.
-
-### Straightness Index (0-1)
-Ratio of displacement to path length. 
-- 1 = perfectly straight path
-- <1 = curved/wandering path
-- Lower values indicate more exploratory behavior
-
-### Fatigue Index
-Ratio of late-phase speed to early-phase speed.
-- 1 = no change
-- <1 = slowing down (fatigue)
-- >1 = speeding up
-
-### Thrashing Frequency (Hz)
-Oscillations per second from body curvature.
-Higher frequency = more vigorous thrashing.
-
----
-
-## Common Questions
-
-**Q: What if my Position files are named differently?**
-A: The pipeline handles Position.csv, Position-1.csv, Position-2.csv, etc.
-
-**Q: Can I analyze only some genotypes?**
-A: Yes, the pipeline auto-detects all genotypes in your data structure.
-
-**Q: How do I add more metrics?**
-A: Edit the helper functions in Notebook 01, particularly `calculate_path_metrics()`.
-
-**Q: Can I change the statistical tests?**
-A: Yes, in Notebook 02, modify `perform_pairwise_tests()` to use Mann-Whitney U instead of t-test.
-
-**Q: What if I don't have curvature data?**
-A: The pipeline will skip thrashing analysis but still process all other metrics.
-
----
-
-## File Checklist
-
-Before running, ensure you have:
-- [ ] Position files in each video folder
-- [ ] Metadata YAML files for each genotype
-- [ ] Virtual environment activated
-- [ ] All packages installed (`pip install -r requirements.txt`)
-
-After running, you should have:
-- [ ] Processed data in `Data/Processed/`
-- [ ] Results and figures in `results/`
-- [ ] Archive in `Data/Archive/`
-
----
-
-## Troubleshooting
-
-**Error: "No Position file found"**
-→ Check your data directory structure
-
-**Error: "KeyError: 'genotype'"**
-→ Ensure YAML metadata files exist
-
-**Empty plots**
-→ Verify CSV files loaded correctly (check first few rows)
-
-**Statistical tests fail**
-→ Need at least 2 groups with data
-
----
-
-## Next Steps
-
-After completing the analysis:
-
-1. Review figures in `results/figures/`
-2. Check statistical results in `results/`
-3. Read the summary report in the archive
-4. Use archived ZIP for sharing/backup
-
----
-
-**Need help?** Check the full README.md for detailed documentation.
+- Missing wave estimates are `NaN`, not zero.
+- Videos are acquisition clusters, not biological replicates.
+- Primary PCA describes the wave-eligible complete-case subset.
+- The current dataset is one experimental run.
+- Independent experimental repeats remain necessary.

@@ -1,4 +1,4 @@
-# Python
+# Python caches and packaging artifacts
 __pycache__/
 *.py[cod]
 *.pyo
@@ -6,29 +6,35 @@ __pycache__/
 *.so
 *.egg-info/
 .dist-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
-# Environments
+# Local environments
 .venv/
 venv/
 ENV/
+.env
+.env.*
 
-# Jupyter
+# Jupyter and temporary execution artifacts
 .ipynb_checkpoints/
+*.nbconvert.ipynb
+*.executed.ipynb
+*.bak.ipynb
+*~
+*.tmp
+*.temp
 
-# OS
+# Editors and operating systems
 .DS_Store
 Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
 
-# Data and outputs (keep structure, do not push data)
+# Project data and generated outputs are intentionally local in this repository.
+# Do not force-add raw data or the full result tree without explicit review.
 Data/
 results/
-
-# Large artifacts
-*.csv
-*.tsv
-*.parquet
-*.feather
-*.h5
-*.hdf5
-*.png
-*.pdf
